@@ -11,7 +11,12 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: '**.supabase.co',
       },
+      {
+        protocol: 'https',
+        hostname: '**.vercel.app',
+      },
     ],
+    unoptimized: true, // Добавьте это для Vercel
   },
 };
 
