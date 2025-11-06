@@ -1,10 +1,15 @@
 import NextAuth, { NextAuthOptions } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
+import GoogleProvider from 'next-auth/providers/google'
 import { supabase } from '@/lib/supabase'
 import bcrypt from 'bcryptjs'
 
 export const authOptions: NextAuthOptions = {
   providers: [
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID || '',
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
+    }),
     CredentialsProvider({
       name: 'Credentials',
       credentials: {
@@ -27,14 +32,16 @@ export const authOptions: NextAuthOptions = {
           throw new Error('Пользователь не найден')
         }
 
-        // Проверка пароля
-        const isPasswordValid = await bcrypt.compare(
-          credentials.password,
-          user.password_hash
-        )
+        // Проверка пароля только если он есть
+        if (user.password_hash) {
+          const isPasswordValid = await bcrypt.compare(
+            credentials.password,
+            user.password_hash
+          )
 
-        if (!isPasswordValid) {
-          throw new Error('Неверный пароль')
+          if (!isPasswordValid) {
+            throw new Error('Неверный пароль')
+          }
         }
 
         return {
@@ -47,11 +54,64 @@ export const authOptions: NextAuthOptions = {
     })
   ],
   callbacks: {
-    async jwt({ token, user }) {
+    async signIn({ user, account, profile }) {
+      // Если вход через Google
+      if (account?.provider === 'google' && user.email) {
+        try {
+          // Проверяем, существует ли пользователь
+          const { data: existingUser, error: fetchError } = await supabase
+            .from('users')
+            .select('*')
+            .eq('email', user.email)
+            .single()
+
+          // Если пользователь не существует, создаем его
+          if (fetchError && fetchError.code === 'PGRST116') {
+            const { error: insertError } = await supabase
+              .from('users')
+              .insert({
+                email: user.email,
+                name: user.name || '',
+                password_hash: null, // Google users don't have password
+                role: 'customer',
+              })
+
+            if (insertError) {
+              console.error('Error creating user:', insertError)
+              return false
+            }
+          }
+
+          return true
+        } catch (error) {
+          console.error('Sign in error:', error)
+          return false
+        }
+      }
+
+      return true
+    },
+    async jwt({ token, user, account }) {
+      // При первом входе или входе через credentials
       if (user) {
         token.role = user.role
         token.id = user.id
       }
+
+      // При входе через Google получаем данные пользователя из БД
+      if (account?.provider === 'google' && token.email) {
+        const { data: dbUser } = await supabase
+          .from('users')
+          .select('*')
+          .eq('email', token.email)
+          .single()
+
+        if (dbUser) {
+          token.role = dbUser.role
+          token.id = dbUser.id
+        }
+      }
+
       return token
     },
     async session({ session, token }) {

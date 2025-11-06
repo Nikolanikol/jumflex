@@ -6,7 +6,7 @@ export type DiscountType = 'percentage' | 'fixed'
 export interface User {
   id: string
   email: string
-  password_hash: string
+  password_hash: string | null // null for OAuth users (Google, etc.)
   name?: string
   phone?: string
   role: UserRole
