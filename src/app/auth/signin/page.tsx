@@ -86,12 +86,12 @@ export default function SignInPage() {
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-gray-700"></div>
             </div>
-            <div className="relative flex justify-center text-sm">
+            {/* <div className="relative flex justify-center text-sm">
               <span className="px-2 bg-darker text-secondary">или</span>
-            </div>
+            </div> */}
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          {/* <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-white mb-2">
                 Email
@@ -153,9 +153,9 @@ export default function SignInPage() {
                 </>
               )}
             </button>
-          </form>
+          </form> */}
 
-          <div className="mt-6 text-center">
+          {/* <div className="mt-6 text-center">
             <p className="text-secondary text-sm">
               Нет аккаунта?{" "}
               <Link
@@ -165,7 +165,7 @@ export default function SignInPage() {
                 Зарегистрироваться
               </Link>
             </p>
-          </div>
+          </div> */}
         </div>
 
         <div className="mt-6 text-center">
