@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import Link from "next/link";
 import {
   ArrowLeft,
@@ -62,8 +62,9 @@ const paymentStatusOptions = [
 export default function OrderDetailPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
+  const { id } = use(params);
   const router = useRouter();
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
@@ -71,14 +72,29 @@ export default function OrderDetailPage({
   const [status, setStatus] = useState("");
   const [paymentStatus, setPaymentStatus] = useState("");
   const [notes, setNotes] = useState("");
+  const [formattedDate, setFormattedDate] = useState("");
 
   useEffect(() => {
     loadOrder();
   }, []);
 
+  useEffect(() => {
+    if (order?.created_at) {
+      setFormattedDate(
+        new Date(order.created_at).toLocaleDateString("ru-RU", {
+          day: "2-digit",
+          month: "long",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        })
+      );
+    }
+  }, [order?.created_at]);
+
   const loadOrder = async () => {
     try {
-      const response = await fetch(`/api/admin/orders/${params.id}`);
+      const response = await fetch(`/api/admin/orders/${id}`);
       const data = await response.json();
       setOrder(data);
       setStatus(data.status);
@@ -94,7 +110,7 @@ export default function OrderDetailPage({
   const handleSave = async () => {
     setSaving(true);
     try {
-      const response = await fetch(`/api/admin/orders/${params.id}`, {
+      const response = await fetch(`/api/admin/orders/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -158,15 +174,7 @@ export default function OrderDetailPage({
             <h1 className="text-4xl font-bold text-white mb-2">
               Заказ {order.order_number}
             </h1>
-            <p className="text-secondary">
-              {new Date(order.created_at).toLocaleDateString("ru-RU", {
-                day: "2-digit",
-                month: "long",
-                year: "numeric",
-                hour: "2-digit",
-                minute: "2-digit",
-              })}
-            </p>
+            <p className="text-secondary">{formattedDate}</p>
           </div>
           <button
             onClick={handleSave}

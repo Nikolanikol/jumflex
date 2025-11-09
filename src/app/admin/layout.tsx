@@ -1,3 +1,25 @@
+// import AdminHeader from "@/components/admin/AdminHeader";
+// import AdminSidebar from "@/components/admin/AdminSidebar";
+// import { requireAdmin } from "@/lib/auth";
+
+// export default async function AdminLayout({
+//   children,
+// }: {
+//   children: React.ReactNode;
+// }) {
+//   const session = await requireAdmin();
+
+//   return (
+//     <div className="min-h-screen bg-gray-950">
+//       <AdminHeader userName={session.user.name || session.user.email} />
+
+//       <div className="flex">
+//         <AdminSidebar />
+//         <main className="flex-1 p-8">{children}</main>
+//       </div>
+//     </div>
+//   );
+// }
 import Link from "next/link";
 import {
   LayoutDashboard,
@@ -6,11 +28,13 @@ import {
   Users,
   Settings,
   LogOut,
+  Layers,
 } from "lucide-react";
 
 const navigation = [
   { name: "Дашборд", href: "/admin", icon: LayoutDashboard },
   { name: "Товары", href: "/admin/products", icon: Package },
+  { name: "Категории", href: "/admin/categories", icon: Layers },
   { name: "Заказы", href: "/admin/orders", icon: ShoppingCart },
   { name: "Пользователи", href: "/admin/users", icon: Users },
   { name: "Настройки", href: "/admin/settings", icon: Settings },

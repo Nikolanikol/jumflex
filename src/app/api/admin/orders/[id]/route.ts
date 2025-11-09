@@ -6,6 +6,7 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    console.log('GET /api/admin/orders/[id]')
     const { id } = await params
 
     // Получить заказ

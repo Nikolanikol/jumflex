@@ -1,46 +1,63 @@
+import { NextResponse } from 'next/server'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/app/api/auth/[...nextauth]/route'
 import { supabase } from '@/lib/supabase'
-import { NextRequest, NextResponse } from 'next/server'
 
-export async function GET(request: NextRequest) {
+async function checkAdmin() {
+  const session = await getServerSession(authOptions)
+  
+  if (!session || session.user.role !== 'admin') {
+    return NextResponse.json(
+      { error: 'Доступ запрещен' },
+      { status: 403 }
+    )
+  }
+  
+  return null
+}
+
+export async function GET(request: Request) {
+  const authError = await checkAdmin()
+  if (authError) return authError
+
   try {
-    const searchParams = request.nextUrl.searchParams
+    const { searchParams } = new URL(request.url)
     const status = searchParams.get('status')
-    const page = parseInt(searchParams.get('page') || '1')
-    const limit = parseInt(searchParams.get('limit') || '20')
 
     let query = supabase
       .from('orders')
-      .select('*', { count: 'exact' })
+      .select(`
+        id,
+        order_number,
+        customer_name,
+        customer_email,
+        customer_phone,
+        total_amount,
+        status,
+        payment_status,
+        created_at
+      `)
+      .order('created_at', { ascending: false })
 
     if (status && status !== 'all') {
       query = query.eq('status', status)
     }
 
-    // Сортировка по дате (новые первые)
-    query = query.order('created_at', { ascending: false })
+    const { data: orders, error } = await query
 
-    // Пагинация
-    const from = (page - 1) * limit
-    const to = from + limit - 1
-    query = query.range(from, to)
+    if (error) {
+      console.error('Ошибка загрузки заказов:', error)
+      return NextResponse.json(
+        { error: error.message },
+        { status: 500 }
+      )
+    }
 
-    const { data: orders, error, count } = await query
-
-    if (error) throw error
-
-    return NextResponse.json({
-      orders,
-      pagination: {
-        page,
-        limit,
-        total: count || 0,
-        totalPages: Math.ceil((count || 0) / limit)
-      }
-    })
+    return NextResponse.json({ orders: orders || [] })
   } catch (error) {
-    console.error('Error fetching orders:', error)
+    console.error('Ошибка в API:', error)
     return NextResponse.json(
-      { error: 'Failed to fetch orders' },
+      { error: 'Внутренняя ошибка сервера' },
       { status: 500 }
     )
   }
