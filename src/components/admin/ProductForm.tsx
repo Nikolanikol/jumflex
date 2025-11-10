@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Category, Brand, Product } from "@/types/database";
 import { Save, X, Upload } from "lucide-react";
+import ImageUpload from "./ImageUpload";
 
 interface ProductFormProps {
   product?: Product;
@@ -38,7 +39,8 @@ export default function ProductForm({
     is_featured: product?.is_featured || false,
     is_new: product?.is_new || false,
   });
-
+  // Замените состояние images:
+  const [images, setImages] = useState<string[]>(product?.images || []);
   useEffect(() => {
     loadCategories();
     loadBrands();
@@ -93,7 +95,7 @@ export default function ProductForm({
     try {
       const productData = {
         ...formData,
-        images: formData.images.split("\n").filter((url) => url.trim()),
+        images: images,
         price: Number(formData.price),
         discount_price: Number(formData.discount_price) || null,
         stock_quantity: Number(formData.stock_quantity),
@@ -304,28 +306,13 @@ export default function ProductForm({
           </div>
         </div>
       </div>
-
       {/* Images */}
       <div className="card p-6">
-        <h2 className="text-xl font-bold text-white mb-6">Изображения</h2>
-
-        <div>
-          <label className="block text-sm font-medium text-white mb-2">
-            URL изображений (по одному на строку)
-          </label>
-          <textarea
-            value={formData.images}
-            onChange={(e) => handleChange("images", e.target.value)}
-            rows={6}
-            className="input-field resize-none font-mono text-sm"
-            placeholder="https://example.com/image1.jpg&#10;https://example.com/image2.jpg"
-          />
-          <p className="text-xs text-secondary mt-2">
-            Введите URL изображений с новой строки
-          </p>
-        </div>
+        <h2 className="text-xl font-bold text-white mb-6">
+          Изображения товара
+        </h2>
+        <ImageUpload images={images} onChange={setImages} maxImages={10} />
       </div>
-
       {/* Additional Info */}
       <div className="card p-6">
         <h2 className="text-xl font-bold text-white mb-6">
