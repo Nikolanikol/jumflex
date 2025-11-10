@@ -1,13 +1,20 @@
 import Link from "next/link";
-import { User, ShoppingBag, Heart, Settings, LogOut } from "lucide-react";
+import {
+  User,
+  ShoppingBag,
+  Heart,
+  Settings,
+  LogOut,
+  MapPin,
+} from "lucide-react";
 
 const navigation = [
   { name: "Профиль", href: "/account", icon: User },
   { name: "Мои заказы", href: "/account/orders", icon: ShoppingBag },
   { name: "Избранное", href: "/account/wishlist", icon: Heart },
-  { name: "Настройки", href: "/account/settings", icon: Settings },
+  //   { name: "Адреса доставки", href: "/account/addresses", icon: MapPin },
+  //   { name: "Настройки", href: "/account/settings", icon: Settings },
 ];
-
 export default function AccountLayout({
   children,
 }: {

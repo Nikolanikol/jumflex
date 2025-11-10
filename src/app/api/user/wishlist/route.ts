@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
       .eq('user_id', session.user.id)
 
     if (error) throw error
-
+        console.log(wishlist, 'wishlist')
     return NextResponse.json(wishlist || [])
   } catch (error) {
     console.error('Error fetching wishlist:', error)
