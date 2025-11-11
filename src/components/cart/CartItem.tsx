@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Minus, Plus, Trash2 } from "lucide-react";
 import { CartItem as CartItemType } from "@/types/database";
 import { useCartStore } from "@/store/cart";
+import toast from "react-hot-toast";
 
 interface CartItemProps {
   item: CartItemType;
@@ -32,6 +33,7 @@ export default function CartItem({ item }: CartItemProps) {
   const handleRemove = () => {
     if (confirm("Удалить товар из корзины?")) {
       removeItem(product.id);
+      toast.success("Товар удален из корзины");
     }
   };
 

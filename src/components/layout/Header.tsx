@@ -83,23 +83,74 @@ export default function Header() {
           </div>
 
           {/* Navigation */}
-          <nav className="hidden md:flex items-center gap-1 py-3 border-t border-dark">
-            {[
-              { name: "Протеин", slug: "protein" },
-              { name: "Аминокислоты", slug: "amino-acids" },
-              { name: "Гейнеры", slug: "gainers" },
-              { name: "Креатин", slug: "creatine" },
-              { name: "Предтреники", slug: "pre-workout" },
-              { name: "Витамины", slug: "vitamins" },
-            ].map((item) => (
-              <Link
-                key={item.slug}
-                href={`/products?category=${item.slug}`}
-                className="px-4 py-2 rounded-lg text-sm font-medium text-secondary hover:text-primary hover:bg-light transition-all"
-              >
-                {item.name}
-              </Link>
-            ))}
+          <nav className="hidden md:flex items-center gap-6 py-3 border-t border-dark">
+            {/* Каталог с dropdown */}
+            <div className="relative group">
+              <button className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-secondary hover:text-primary hover:bg-light transition-all">
+                Каталог
+                <svg
+                  className="w-4 h-4 transition-transform group-hover:rotate-180"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
+              </button>
+
+              {/* Dropdown меню */}
+              <div className="absolute left-0 top-full mt-2 w-56 bg-white rounded-xl shadow-xl border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                <div className="py-2">
+                  {[
+                    { name: "Протеин", slug: "protein", icon: "💪" },
+                    { name: "Аминокислоты", slug: "amino-acids", icon: "🧬" },
+                    { name: "Гейнеры", slug: "gainers", icon: "📈" },
+                    { name: "Креатин", slug: "creatine", icon: "⚡" },
+                    { name: "Предтреники", slug: "pre-workout", icon: "🔥" },
+                    { name: "Все продукты", slug: "", icon: "🛍️" },
+                  ].map((item) => (
+                    <Link
+                      key={item.slug}
+                      href={`/products${
+                        item.slug ? `?category=${item.slug}` : ""
+                      }`}
+                      className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-secondary hover:text-primary hover:bg-light transition-all"
+                    >
+                      <span className="text-lg">{item.icon}</span>
+                      {item.name}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Блог */}
+            <Link
+              href="/blog"
+              className="px-4 py-2 rounded-lg text-sm font-medium text-secondary hover:text-primary hover:bg-light transition-all"
+            >
+              Блог
+            </Link>
+
+            {/* Дополнительные разделы (опционально) */}
+            <Link
+              href="/about"
+              className="px-4 py-2 rounded-lg text-sm font-medium text-secondary hover:text-primary hover:bg-light transition-all"
+            >
+              О нас
+            </Link>
+
+            {/* <Link
+              href="/contacts"
+              className="px-4 py-2 rounded-lg text-sm font-medium text-secondary hover:text-primary hover:bg-light transition-all"
+            >
+              Контакты
+            </Link> */}
           </nav>
         </div>
       </header>
@@ -190,21 +241,6 @@ export default function Header() {
               )}
             </Link>
 
-            <Link
-              href="/account/wishlist"
-              className="relative p-2 rounded-full border-2 border-gray-200 hover:border-primary transition-all group"
-            >
-              <Heart
-                size={20}
-                className="text-secondary group-hover:text-primary transition-all"
-              />
-              {totalWishlist > 0 && (
-                <span className="absolute -top-1 -right-1 bg-accent text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
-                  {totalWishlist}
-                </span>
-              )}
-            </Link>
-
             <button
               className="md:hidden p-2 rounded-lg bg-light hover:bg-lighter transition-all"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -219,23 +255,74 @@ export default function Header() {
         </div>
 
         {/* Navigation */}
-        <nav className="hidden md:flex items-center gap-1 py-3 border-t border-dark">
-          {[
-            { name: "Протеин", slug: "protein" },
-            { name: "Аминокислоты", slug: "amino-acids" },
-            { name: "Гейнеры", slug: "gainers" },
-            { name: "Креатин", slug: "creatine" },
-            { name: "Предтреники", slug: "pre-workout" },
-            { name: "Витамины", slug: "vitamins" },
-          ].map((item) => (
-            <Link
-              key={item.slug}
-              href={`/products?category=${item.slug}`}
-              className="px-4 py-2 rounded-lg text-sm font-medium text-secondary hover:text-primary hover:bg-light transition-all"
-            >
-              {item.name}
-            </Link>
-          ))}
+        <nav className="hidden md:flex items-center gap-6 py-3 border-t border-dark">
+          {/* Каталог с dropdown */}
+          <div className="relative group">
+            <button className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-secondary hover:text-primary hover:bg-light transition-all">
+              Каталог
+              <svg
+                className="w-4 h-4 transition-transform group-hover:rotate-180"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M19 9l-7 7-7-7"
+                />
+              </svg>
+            </button>
+
+            {/* Dropdown меню */}
+            <div className="absolute left-0 top-full mt-2 w-56 bg-white rounded-xl shadow-xl border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+              <div className="py-2">
+                {[
+                  { name: "Протеин", slug: "protein", icon: "💪" },
+                  { name: "Аминокислоты", slug: "amino-acids", icon: "🧬" },
+                  { name: "Гейнеры", slug: "gainers", icon: "📈" },
+                  { name: "Креатин", slug: "creatine", icon: "⚡" },
+                  { name: "Предтреники", slug: "pre-workout", icon: "🔥" },
+                  { name: "Все продукты", slug: "", icon: "🛍️" },
+                ].map((item) => (
+                  <Link
+                    key={item.slug}
+                    href={`/products${
+                      item.slug ? `?category=${item.slug}` : ""
+                    }`}
+                    className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-secondary hover:text-primary hover:bg-light transition-all"
+                  >
+                    <span className="text-lg">{item.icon}</span>
+                    {item.name}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Блог */}
+          <Link
+            href="/blog"
+            className="px-4 py-2 rounded-lg text-sm font-medium text-secondary hover:text-primary hover:bg-light transition-all"
+          >
+            Блог
+          </Link>
+
+          {/* Дополнительные разделы (опционально) */}
+          <Link
+            href="/about"
+            className="px-4 py-2 rounded-lg text-sm font-medium text-secondary hover:text-primary hover:bg-light transition-all"
+          >
+            О нас
+          </Link>
+
+          {/* <Link
+            href="/contacts"
+            className="px-4 py-2 rounded-lg text-sm font-medium text-secondary hover:text-primary hover:bg-light transition-all"
+          >
+            Контакты
+          </Link> */}
         </nav>
 
         {/* Mobile menu */}

@@ -77,7 +77,7 @@ export default function Footer() {
                   Доставка
                 </Link>
               </li>
-              <li>
+              {/* <li>
                 <Link
                   href="/returns"
                   className="text-secondary hover:text-primary transition-all text-sm flex items-center group"
@@ -94,7 +94,7 @@ export default function Footer() {
                   <span className="w-1 h-1 rounded-full bg-primary mr-2 opacity-0 group-hover:opacity-100 transition-all"></span>
                   Вопросы и ответы
                 </Link>
-              </li>
+              </li> */}
             </ul>
           </div>
 

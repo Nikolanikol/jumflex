@@ -41,6 +41,12 @@ export default function AddressForm({
           Название адреса *
         </label>
         <div className="relative">
+          <span className="absolute inset-y-0 left-0 flex items-center pl-3">
+            <Home
+              size={18}
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-muted"
+            />
+          </span>
           <input
             type="text"
             value={formData.label}
@@ -48,12 +54,8 @@ export default function AddressForm({
               setFormData({ ...formData, label: e.target.value })
             }
             placeholder="Дом, Работа, Основной..."
-            className="input-field pl-10"
+            className="w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             required
-          />
-          <Home
-            size={18}
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-muted"
           />
         </div>
       </div>
@@ -65,6 +67,12 @@ export default function AddressForm({
             Имя получателя *
           </label>
           <div className="relative">
+            <span className="absolute inset-y-0 left-0 flex items-center pl-3">
+              <User
+                size={18}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-muted"
+              />
+            </span>
             <input
               type="text"
               value={formData.recipient_name}
@@ -72,12 +80,8 @@ export default function AddressForm({
                 setFormData({ ...formData, recipient_name: e.target.value })
               }
               placeholder="Иван Иванов"
-              className="input-field pl-10"
+              className="w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
-            />
-            <User
-              size={18}
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-muted"
             />
           </div>
         </div>
@@ -87,6 +91,12 @@ export default function AddressForm({
             Телефон получателя *
           </label>
           <div className="relative">
+            <span className="absolute inset-y-0 left-0 flex items-center pl-3">
+              <Phone
+                size={18}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-muted"
+              />
+            </span>
             <input
               type="tel"
               value={formData.recipient_phone}
@@ -94,12 +104,8 @@ export default function AddressForm({
                 setFormData({ ...formData, recipient_phone: e.target.value })
               }
               placeholder="+82 10-1234-5678"
-              className="input-field pl-10"
+              className="w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
-            />
-            <Phone
-              size={18}
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-muted"
             />
           </div>
         </div>
@@ -111,6 +117,12 @@ export default function AddressForm({
           Адрес (строка 1) *
         </label>
         <div className="relative">
+          <span className="absolute inset-y-0 left-0 flex items-center pl-3">
+            <MapPin
+              size={18}
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-muted"
+            />
+          </span>
           <input
             type="text"
             value={formData.address_line1}
@@ -118,12 +130,8 @@ export default function AddressForm({
               setFormData({ ...formData, address_line1: e.target.value })
             }
             placeholder="Улица, дом, квартира"
-            className="input-field pl-10"
+            className="w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             required
-          />
-          <MapPin
-            size={18}
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-muted"
           />
         </div>
       </div>
@@ -133,6 +141,12 @@ export default function AddressForm({
           Адрес (строка 2)
         </label>
         <div className="relative">
+          <span className="absolute inset-y-0 left-0 flex items-center pl-3">
+            <MapPin
+              size={18}
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-muted"
+            />
+          </span>
           <input
             type="text"
             value={formData.address_line2}
@@ -140,11 +154,7 @@ export default function AddressForm({
               setFormData({ ...formData, address_line2: e.target.value })
             }
             placeholder="Подъезд, этаж, домофон..."
-            className="input-field pl-10"
-          />
-          <Building2
-            size={18}
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-muted"
+            className="w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
       </div>
@@ -155,6 +165,7 @@ export default function AddressForm({
           <label className="block text-sm font-medium text-white mb-2">
             Город *
           </label>
+
           <input
             type="text"
             value={formData.city}

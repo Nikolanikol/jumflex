@@ -1,4 +1,5 @@
 import { supabase } from '@/lib/supabase'
+import { sanitizeSearchQuery } from '@/utils/sanitize'
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(request: NextRequest) {
@@ -42,9 +43,12 @@ export async function GET(request: NextRequest) {
     }
 
     // Фильтрация по бренду
-    if (brand) {
-      query = query.eq('brand_id', brand)
-    }
+   if (brand) {
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+  if (uuidRegex.test(brand)) {
+    query = query.eq('brand_id', brand)
+  }
+}
 
     // Фильтрация по цене
     if (minPrice) {
@@ -55,9 +59,18 @@ export async function GET(request: NextRequest) {
     }
 
     // Поиск по названию
-    if (search) {
-      query = query.or(`name_ko.ilike.%${search}%,name_ru.ilike.%${search}%,name_en.ilike.%${search}%`)
-    }
+
+if (search && search.trim()) {
+  const sanitizedSearch = sanitizeSearchQuery(search)
+  
+  if (sanitizedSearch) {
+    query = query.or(
+      `name_ko.ilike.%${sanitizedSearch}%,` +
+      `name_ru.ilike.%${sanitizedSearch}%,` +
+      `name_en.ilike.%${sanitizedSearch}%`
+    )
+  }
+}
 
     // Фильтр популярных товаров
     if (featured === 'true') {

@@ -133,7 +133,7 @@ export default async function ProductPage({
               <h1 className="text-3xl font-bold text-white mb-4">
                 {product.name_ru || product.name_ko}
               </h1>
-              <WishlistButton productId={product.id} size={24} />
+              {/* <WishlistButton productId={product.id} size={24} /> */}
 
               {/* Rating */}
               <div className="flex items-center gap-3 mb-6">

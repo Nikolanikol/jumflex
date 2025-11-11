@@ -43,9 +43,9 @@ export default function SuccessContent() {
                   className="text-primary flex-shrink-0 mt-1"
                 />
                 <div>
-                  <h3 className="font-semibold text-white mb-1">
+                  {/* <h3 className="font-semibold text-white mb-1">
                     Информация о заказе отправлена на email
-                  </h3>
+                  </h3> */}
                   <p className="text-sm text-secondary">
                     Вы получите подтверждение и информацию о доставке
                   </p>

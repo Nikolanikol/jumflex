@@ -93,17 +93,23 @@ export default function WishlistPage() {
   };
 
   // Подсчет статистики
-  const totalValue = items.reduce((sum, item) => {
-    const price = item.product.discount_price || item.product.price;
-    return sum + price;
-  }, 0);
+  const totalValue =
+    items.length > 0
+      ? items?.reduce((sum, item) => {
+          const price = item.product.discount_price || item.product.price;
+          return sum + price;
+        }, 0)
+      : 0;
 
-  const totalDiscount = items.reduce((sum, item) => {
-    if (item.product.discount_price) {
-      return sum + (item.product.price - item.product.discount_price);
-    }
-    return sum;
-  }, 0);
+  const totalDiscount =
+    items.length > 0
+      ? items.reduce((sum, item) => {
+          if (item.product.discount_price) {
+            return sum + (item.product.price - item.product.discount_price);
+          }
+          return sum;
+        }, 0)
+      : 0;
 
   if (loading) {
     return (

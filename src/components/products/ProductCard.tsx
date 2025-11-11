@@ -6,6 +6,7 @@ import { ShoppingCart, Star } from "lucide-react";
 import { Product } from "@/types/database";
 import { useCartStore } from "@/store/cart";
 import WishlistButton from "./WishlistButton";
+import toast from "react-hot-toast";
 
 interface ProductCardProps {
   product: Product;
@@ -26,6 +27,7 @@ export default function ProductCard({ product }: ProductCardProps) {
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     addItem(product);
+    toast.success("Товар добавлен в корзину");
   };
   console.log("Product slug:", product.slug); // Для отладки
 
@@ -33,9 +35,9 @@ export default function ProductCard({ product }: ProductCardProps) {
     <Link href={`/products/${product.slug}`} className="group block">
       <div className="card overflow-hidden h-full flex flex-col">
         {/* Wishlist button */}
-        <div className="absolute  top-2 right-2 z-50">
+        {/* <div className="absolute  top-2 right-2 z-50">
           <WishlistButton productId={product.id} size={34} />
-        </div>
+        </div> */}
         {/* Image */}
         <div className="relative aspect-square overflow-hidden bg-lighter">
           {product.images && product.images[0] ? (
