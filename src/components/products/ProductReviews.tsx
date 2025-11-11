@@ -19,20 +19,22 @@ export default function ProductReviews({
       <Star
         key={index}
         size={16}
-        className={index < rating ? "fill-primary text-primary" : "text-muted"}
+        className={
+          index < rating ? "fill-primary text-primary" : "text-gray-600"
+        }
       />
     ));
   };
 
   return (
     <div className="mt-12">
-      <div className="card p-6">
+      <div className="bg-dark-light rounded-lg shadow-lg p-6">
         <h2 className="text-2xl font-bold text-white mb-6">
           Отзывы покупателей
         </h2>
 
         {/* Rating summary */}
-        <div className="flex items-center gap-6 mb-8 p-6 bg-lighter rounded-xl">
+        <div className="flex items-center gap-6 mb-8 p-6 bg-dark rounded-xl border border-gray-800">
           <div className="text-center">
             <div className="text-5xl font-bold text-primary mb-2">
               {averageRating.toFixed(1)}
@@ -60,7 +62,7 @@ export default function ProductReviews({
                       />
                     ))}
                   </div>
-                  <div className="flex-1 h-2 bg-dark rounded-full overflow-hidden">
+                  <div className="flex-1 h-2 bg-gray-700 rounded-full overflow-hidden">
                     <div
                       className="h-full bg-primary rounded-full transition-all"
                       style={{ width: `${percentage}%` }}
@@ -79,9 +81,12 @@ export default function ProductReviews({
         {reviews.length > 0 ? (
           <div className="space-y-6">
             {reviews.map((review) => (
-              <div key={review.id} className="p-6 bg-lighter rounded-xl">
+              <div
+                key={review.id}
+                className="p-6 bg-dark rounded-xl border border-gray-800 hover:border-gray-700 transition-colors"
+              >
                 <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-full bg-dark flex items-center justify-center flex-shrink-0">
+                  <div className="w-12 h-12 rounded-full bg-dark-light border border-gray-800 flex items-center justify-center flex-shrink-0">
                     <User size={24} className="text-primary" />
                   </div>
 
@@ -115,11 +120,11 @@ export default function ProductReviews({
           </div>
         ) : (
           <div className="text-center py-12">
-            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-light flex items-center justify-center">
-              <Star size={32} className="text-muted" />
+            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-dark-light border border-gray-800 flex items-center justify-center">
+              <Star size={32} className="text-gray-600" />
             </div>
             <p className="text-secondary">Пока нет отзывов</p>
-            <p className="text-sm text-muted mt-2">
+            <p className="text-sm text-gray-500 mt-2">
               Будьте первым, кто оставит отзыв!
             </p>
           </div>

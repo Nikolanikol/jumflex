@@ -1,12 +1,13 @@
 import { notFound } from "next/navigation";
 import ProductGallery from "@/components/products/ProductGallery";
-import ProductReviews from "@/components/products/ProductReviews";
 import ProductCard from "@/components/products/ProductCard";
 import { Product } from "@/types/database";
 import { Star, Shield, Truck, Package } from "lucide-react";
 import AddToCartButton from "@/components/products/AddToCartButton";
 import Link from "next/link";
 import WishlistButton from "@/components/products/WishlistButton";
+import RatingSection from "@/components/products/RatingSection";
+import CommentsSection from "@/components/products/CommentsSection";
 
 async function getProduct(slug: string): Promise<Product | null> {
   try {
@@ -51,15 +52,16 @@ async function getSimilarProducts(
 export default async function ProductPage({
   params,
 }: {
-  params: Promise<{ slug: string }>; // Изменено: Promise
+  params: Promise<{ slug: string }>;
 }) {
-  const { slug } = await params; // Добавлено: await params
-
+  const { slug } = await params;
   const product = await getProduct(slug);
 
   if (!product) {
     notFound();
   }
+
+  console.log("Product ID:", product.id); // Для отладки
 
   const similarProducts = product.category_id
     ? await getSimilarProducts(product.category_id, product.id)
@@ -133,7 +135,6 @@ export default async function ProductPage({
               <h1 className="text-3xl font-bold text-white mb-4">
                 {product.name_ru || product.name_ko}
               </h1>
-              {/* <WishlistButton productId={product.id} size={24} /> */}
 
               {/* Rating */}
               <div className="flex items-center gap-3 mb-6">
@@ -183,10 +184,13 @@ export default async function ProductPage({
               </div>
 
               {/* Add to cart */}
-              <AddToCartButton product={product} />
+              <div className="flex gap-3 mb-6">
+                <AddToCartButton product={product} className="flex-1" />
+                <WishlistButton productId={product.id} size={24} />
+              </div>
 
               {/* Features */}
-              <div className="mt-6 pt-6 border-t border-dark space-y-3">
+              <div className="pt-6 border-t border-dark space-y-3">
                 <div className="flex items-center gap-3 text-secondary">
                   <Shield size={18} className="text-primary" />
                   <span className="text-sm">100% оригинальный товар</span>
@@ -204,6 +208,12 @@ export default async function ProductPage({
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Рейтинги и комментарии */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+          <RatingSection productId={product.id} />
+          <CommentsSection productId={product.id} />
         </div>
 
         {/* Description tabs */}
@@ -240,33 +250,12 @@ export default async function ProductPage({
                 </p>
               </div>
             )}
-
-            {/* Nutrition facts */}
-            {product.nutrition_facts && (
-              <div className="pt-6 border-t border-dark">
-                <h2 className="text-xl font-bold text-white mb-4">
-                  Пищевая ценность
-                </h2>
-                <div className="bg-lighter p-4 rounded-xl">
-                  <pre className="text-secondary text-sm overflow-x-auto">
-                    {JSON.stringify(product.nutrition_facts, null, 2)}
-                  </pre>
-                </div>
-              </div>
-            )}
           </div>
         </div>
 
-        {/* Reviews */}
-        <ProductReviews
-          reviews={product.reviews || []}
-          averageRating={product.rating}
-          totalReviews={product.reviews_count}
-        />
-
         {/* Similar products */}
         {similarProducts.length > 0 && (
-          <div className="mt-12">
+          <div>
             <h2 className="text-2xl font-bold text-white mb-6">
               Похожие товары
             </h2>
