@@ -37,6 +37,7 @@ const navigation = [
   { name: "Категории", href: "/admin/categories", icon: Layers },
   { name: "Заказы", href: "/admin/orders", icon: ShoppingCart },
   { name: "Пользователи", href: "/admin/users", icon: Users },
+  { name: "Блог", href: "/admin/blog", icon: Users },
   // { name: "Настройки", href: "/admin/settings", icon: Settings }
 ];
 

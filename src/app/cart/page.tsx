@@ -82,7 +82,7 @@ export default function CartPage() {
               <ShoppingCart size={24} className="text-primary" />
             </div>
             <h3 className="font-bold text-white mb-2">Бесплатная доставка</h3>
-            <p className="text-sm text-secondary">При заказе от 50,000₩</p>
+            <p className="text-sm text-secondary">При заказе от 100,000₩</p>
           </div>
 
           <div className="card p-6 text-center">

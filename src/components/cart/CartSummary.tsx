@@ -14,7 +14,7 @@ export default function CartSummary() {
   const [promoApplied, setPromoApplied] = useState(false);
 
   const subtotal = getTotalPrice();
-  const shippingCost = subtotal >= 50000 ? 0 : 3000;
+  const shippingCost = subtotal >= 50000 ? 0 : 5000;
   const total = subtotal - discount + shippingCost;
 
   const handleApplyPromo = async () => {

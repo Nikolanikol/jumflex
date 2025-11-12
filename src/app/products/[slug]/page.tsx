@@ -209,7 +209,7 @@ export default async function ProductPage({
                   <p className="text-white text-sm font-medium">
                     Быстрая доставка
                   </p>
-                  <p className="text-secondary text-xs">1-3 дня</p>
+                  <p className="text-secondary text-xs">3-5 дней</p>
                 </div>
               </div>
               <div className="flex items-center space-x-3">
