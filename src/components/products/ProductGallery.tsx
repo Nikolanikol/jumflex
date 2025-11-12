@@ -5,8 +5,8 @@ import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface ProductGalleryProps {
-  images: string[];
-  productName: string;
+  images?: string[];
+  productName?: string;
 }
 
 export default function ProductGallery({
