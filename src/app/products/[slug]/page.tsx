@@ -185,7 +185,7 @@ export default async function ProductPage({
 
               {/* Add to cart */}
               <div className="flex gap-3 mb-6">
-                <AddToCartButton product={product} className="flex-1" />
+                <AddToCartButton product={product} />
                 <WishlistButton productId={product.id} size={24} />
               </div>
 
