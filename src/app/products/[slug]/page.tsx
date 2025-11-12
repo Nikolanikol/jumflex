@@ -8,20 +8,39 @@ import Link from "next/link";
 import WishlistButton from "@/components/products/WishlistButton";
 import RatingSection from "@/components/products/RatingSection";
 import CommentsSection from "@/components/products/CommentsSection";
+import { supabase } from "@/lib/supabase";
+
+// Помечаем страницу как динамическую для Vercel
+export const dynamic = "force-dynamic";
 
 async function getProduct(slug: string): Promise<Product | null> {
   try {
-    const response = await fetch(
-      `${
-        process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"
-      }/api/products/${slug}`,
-      {
-        cache: "no-store",
-      }
-    );
+    const { data: product, error } = await supabase
+      .from("products")
+      .select(
+        `
+        *,
+        category:categories(id, name_ko, name_ru, name_en, slug),
+        brand:brands(id, name, logo_url),
+        reviews(
+          id,
+          rating,
+          comment,
+          created_at,
+          user:users(name)
+        )
+      `
+      )
+      .eq("slug", slug)
+      .eq("reviews.is_approved", true)
+      .single();
 
-    if (!response.ok) return null;
-    return response.json();
+    if (error || !product) {
+      console.error("Error fetching product:", error);
+      return null;
+    }
+
+    return product as unknown as Product;
   } catch (error) {
     console.error("Error fetching product:", error);
     return null;
@@ -33,16 +52,25 @@ async function getSimilarProducts(
   currentProductId: string
 ): Promise<Product[]> {
   try {
-    const response = await fetch(
-      `${
-        process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"
-      }/api/products?category=${categoryId}&limit=4`,
-      { cache: "no-store" }
-    );
-    const data = await response.json();
-    return (data.products || []).filter(
-      (p: Product) => p.id !== currentProductId
-    );
+    const { data: products, error } = await supabase
+      .from("products")
+      .select(
+        `
+        *,
+        category:categories(id, name_ko, name_ru, name_en, slug),
+        brand:brands(id, name, logo_url)
+      `
+      )
+      .eq("category_id", categoryId)
+      .neq("id", currentProductId)
+      .limit(4);
+
+    if (error) {
+      console.error("Error fetching similar products:", error);
+      return [];
+    }
+
+    return (products || []) as unknown as Product[];
   } catch (error) {
     console.error("Error fetching similar products:", error);
     return [];
@@ -80,186 +108,169 @@ export default async function ProductPage({
     <div className="min-h-screen bg-dark py-8">
       <div className="container mx-auto px-4">
         {/* Breadcrumbs */}
-        <div className="mb-6 flex items-center gap-2 text-sm">
-          <Link
-            href="/"
-            className="text-secondary hover:text-primary transition-colors"
-          >
+        <nav className="mb-8 flex items-center space-x-2 text-sm text-secondary">
+          <Link href="/" className="hover:text-white transition-colors">
             Главная
           </Link>
-          <span className="text-muted">/</span>
-          <Link
-            href="/products"
-            className="text-secondary hover:text-primary transition-colors"
-          >
-            Каталог
+          <span>/</span>
+          <Link href="/products" className="hover:text-white transition-colors">
+            Товары
           </Link>
           {product.category && (
             <>
-              <span className="text-muted">/</span>
+              <span>/</span>
               <Link
-                href={`/products?category=${product.category.slug}`}
-                className="text-secondary hover:text-primary transition-colors"
+                href={`/products?category=${product.category.id}`}
+                className="hover:text-white transition-colors"
               >
-                {product.category.name_ru || product.category.name_ko}
+                {product.category.name_ru}
               </Link>
             </>
           )}
-          <span className="text-muted">/</span>
-          <span className="text-white">
-            {product.name_ru || product.name_ko}
-          </span>
-        </div>
+          <span>/</span>
+          <span className="text-white">{product.name_ru}</span>
+        </nav>
 
-        {/* Product info */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+        {/* Product Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
           {/* Gallery */}
           <div>
-            <ProductGallery
-              images={product.images || []}
-              productName={product.name_ru || product.name_ko}
-            />
+            <ProductGallery images={product.images || []} />
           </div>
 
-          {/* Info */}
-          <div>
-            <div className="card p-6">
-              {/* Brand */}
-              {product.brand && (
-                <p className="text-sm text-muted mb-2 uppercase tracking-wide font-medium">
-                  {product.brand.name}
-                </p>
-              )}
-
-              {/* Title */}
-              <h1 className="text-3xl font-bold text-white mb-4">
-                {product.name_ru || product.name_ko}
+          {/* Product Info */}
+          <div className="space-y-6">
+            <div>
+              <h1 className="text-3xl font-bold text-white mb-2">
+                {product.name_ru}
               </h1>
+              {product.brand && (
+                <p className="text-secondary">{product.brand.name}</p>
+              )}
+            </div>
 
-              {/* Rating */}
-              <div className="flex items-center gap-3 mb-6">
-                <div className="flex items-center gap-1">
-                  <Star size={20} className="fill-primary text-primary" />
-                  <span className="text-lg font-semibold text-white">
-                    {product.rating.toFixed(1)}
+            {/* Rating */}
+            <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-1">
+                <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
+                <span className="text-white font-medium">{product.rating}</span>
+              </div>
+              <span className="text-secondary">
+                {product.reviews_count} отзывов
+              </span>
+            </div>
+
+            {/* Price */}
+            <div className="flex items-center space-x-4">
+              <span className="text-3xl font-bold text-white">
+                {price.toLocaleString()} ₩
+              </span>
+              {hasDiscount && (
+                <>
+                  <span className="text-xl text-secondary line-through">
+                    {product.price.toLocaleString()} ₩
                   </span>
-                </div>
-                <span className="text-secondary">
-                  ({product.reviews_count} отзывов)
-                </span>
-              </div>
-
-              {/* Price */}
-              <div className="mb-6 p-6 bg-lighter rounded-xl">
-                {hasDiscount && (
-                  <div className="flex items-center gap-3 mb-2">
-                    <span className="text-2xl text-muted line-through">
-                      ₩{product.price.toLocaleString()}
-                    </span>
-                    <span className="bg-accent text-white text-sm font-bold px-3 py-1 rounded-lg">
-                      -{discountPercent}%
-                    </span>
-                  </div>
-                )}
-                <div className="text-4xl font-bold text-primary">
-                  ₩{price.toLocaleString()}
-                </div>
-              </div>
-
-              {/* Stock status */}
-              <div className="mb-6">
-                {product.stock_quantity > 0 ? (
-                  <div className="flex items-center gap-2 text-green-400">
-                    <Package size={18} />
-                    <span className="font-medium">
-                      В наличии: {product.stock_quantity} шт
-                    </span>
-                  </div>
-                ) : (
-                  <div className="flex items-center gap-2 text-accent">
-                    <Package size={18} />
-                    <span className="font-medium">Нет в наличии</span>
-                  </div>
-                )}
-              </div>
-
-              {/* Add to cart */}
-              <div className="flex gap-3 mb-6">
-                <AddToCartButton product={product} />
-                <WishlistButton productId={product.id} size={24} />
-              </div>
-
-              {/* Features */}
-              <div className="pt-6 border-t border-dark space-y-3">
-                <div className="flex items-center gap-3 text-secondary">
-                  <Shield size={18} className="text-primary" />
-                  <span className="text-sm">100% оригинальный товар</span>
-                </div>
-                <div className="flex items-center gap-3 text-secondary">
-                  <Truck size={18} className="text-primary" />
-                  <span className="text-sm">
-                    Бесплатная доставка от 50,000₩
+                  <span className="px-3 py-1 bg-primary/20 text-primary rounded-full text-sm font-medium">
+                    -{discountPercent}%
                   </span>
+                </>
+              )}
+            </div>
+
+            {/* Stock status */}
+            <div>
+              {product.stock_quantity > 0 ? (
+                <span className="text-green-400">В наличии</span>
+              ) : (
+                <span className="text-red-400">Нет в наличии</span>
+              )}
+            </div>
+
+            {/* Actions */}
+            <div className="flex space-x-4">
+              <AddToCartButton product={product} className="flex-1" />
+              <WishlistButton productId={product.id} />
+            </div>
+
+            {/* Features */}
+            <div className="grid grid-cols-2 gap-4 pt-6 border-t border-dark-lighter">
+              <div className="flex items-center space-x-3">
+                <Shield className="w-6 h-6 text-primary" />
+                <div>
+                  <p className="text-white text-sm font-medium">
+                    Гарантия качества
+                  </p>
+                  <p className="text-secondary text-xs">100% оригинал</p>
                 </div>
-                <div className="flex items-center gap-3 text-secondary">
-                  <Package size={18} className="text-primary" />
-                  <span className="text-sm">Гарантия возврата денег</span>
+              </div>
+              <div className="flex items-center space-x-3">
+                <Truck className="w-6 h-6 text-primary" />
+                <div>
+                  <p className="text-white text-sm font-medium">
+                    Быстрая доставка
+                  </p>
+                  <p className="text-secondary text-xs">1-3 дня</p>
+                </div>
+              </div>
+              <div className="flex items-center space-x-3">
+                <Package className="w-6 h-6 text-primary" />
+                <div>
+                  <p className="text-white text-sm font-medium">
+                    Безопасная упаковка
+                  </p>
+                  <p className="text-secondary text-xs">Надежная защита</p>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Рейтинги и комментарии */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+        {/* Description */}
+        {product.description_ru && (
+          <div className="mb-12 card">
+            <h2 className="text-2xl font-bold text-white mb-4">Описание</h2>
+            <div
+              className="text-secondary prose prose-invert max-w-none"
+              dangerouslySetInnerHTML={{ __html: product.description_ru }}
+            />
+          </div>
+        )}
+
+        {/* Ingredients */}
+        {product.ingredients && (
+          <div className="mb-12 card">
+            <h2 className="text-2xl font-bold text-white mb-4">Состав</h2>
+            <p className="text-secondary">{product.ingredients}</p>
+          </div>
+        )}
+
+        {/* Usage Instructions */}
+        {product.usage_instructions && (
+          <div className="mb-12 card">
+            <h2 className="text-2xl font-bold text-white mb-4">
+              Способ применения
+            </h2>
+            <p className="text-secondary">{product.usage_instructions}</p>
+          </div>
+        )}
+
+        {/* Rating Section */}
+        <div className="mb-12">
           <RatingSection productId={product.id} />
+        </div>
+
+        {/* Comments Section */}
+        <div className="mb-12">
           <CommentsSection productId={product.id} />
         </div>
 
-        {/* Description tabs */}
-        <div className="card p-6 mb-12">
-          <div className="space-y-6">
-            {/* Description */}
-            {(product.description_ru || product.description_ko) && (
-              <div>
-                <h2 className="text-xl font-bold text-white mb-4">Описание</h2>
-                <p className="text-secondary leading-relaxed">
-                  {product.description_ru || product.description_ko}
-                </p>
-              </div>
-            )}
-
-            {/* Ingredients */}
-            {product.ingredients && (
-              <div className="pt-6 border-t border-dark">
-                <h2 className="text-xl font-bold text-white mb-4">Состав</h2>
-                <p className="text-secondary leading-relaxed">
-                  {product.ingredients}
-                </p>
-              </div>
-            )}
-
-            {/* Usage */}
-            {product.usage_instructions && (
-              <div className="pt-6 border-t border-dark">
-                <h2 className="text-xl font-bold text-white mb-4">
-                  Способ применения
-                </h2>
-                <p className="text-secondary leading-relaxed">
-                  {product.usage_instructions}
-                </p>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Similar products */}
+        {/* Similar Products */}
         {similarProducts.length > 0 && (
           <div>
             <h2 className="text-2xl font-bold text-white mb-6">
               Похожие товары
             </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {similarProducts.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}
