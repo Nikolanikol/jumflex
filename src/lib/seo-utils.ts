@@ -54,7 +54,7 @@ export function generateMetadata({
     keywords: metaKeywords,
     authors: author ? [{ name: author }] : undefined,
     openGraph: {
-      type,
+
       locale: defaultMetadata.locale,
       url: metaUrl,
       siteName: defaultMetadata.siteName,
