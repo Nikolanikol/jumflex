@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { Star, CheckCircle } from "lucide-react";
 import { RatingStats } from "@/types/reviews";
+import toast from "react-hot-toast";
 
 interface RatingSectionProps {
   productId: string;
@@ -71,12 +72,14 @@ export default function RatingSection({ productId }: RatingSectionProps) {
 
   const handleRatingClick = async (rating: number) => {
     if (!session) {
-      alert("Необходимо войти в систему для оценки товара");
+      toast.error("Необходимо войти в систему для оценки товара");
+
       return;
     }
 
     if (userRating !== null) {
-      alert("Вы уже оценили этот товар");
+      toast.error("Вы уже оценили этот товар");
+
       return;
     }
 
@@ -93,11 +96,11 @@ export default function RatingSection({ productId }: RatingSectionProps) {
         await loadRatingStats();
       } else {
         const error = await response.json();
-        alert(error.error || "Ошибка при сохранении оценки");
+        toast.error(error.error || "Ошибка при сохранении оценки");
       }
     } catch (error) {
       console.error("Error submitting rating:", error);
-      alert("Ошибка при сохранении оценки");
+      toast.error("Ошибка при сохранении оценки");
     } finally {
       setLoading(false);
     }

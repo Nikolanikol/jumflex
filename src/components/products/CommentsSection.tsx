@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { MessageSquare, Edit2, Trash2, Send } from "lucide-react";
 import { ProductComment } from "@/types/reviews";
+import toast from "react-hot-toast";
 
 interface CommentsSectionProps {
   productId: string;
@@ -36,7 +37,7 @@ export default function CommentsSection({ productId }: CommentsSectionProps) {
   const handleSubmitComment = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!session) {
-      alert("Необходимо войти в систему для добавления комментария");
+      toast.error("Необходимо войти в систему для добавления комментария");
       return;
     }
 
@@ -58,11 +59,11 @@ export default function CommentsSection({ productId }: CommentsSectionProps) {
         await loadComments();
       } else {
         const error = await response.json();
-        alert(error.error || "Ошибка при добавлении комментария");
+        toast.error(error.error || "Ошибка при добавлении комментария");
       }
     } catch (error) {
       console.error("Error submitting comment:", error);
-      alert("Ошибка при добавлении комментария");
+      toast.error("Ошибка при добавлении комментария");
     } finally {
       setLoading(false);
     }
@@ -85,11 +86,11 @@ export default function CommentsSection({ productId }: CommentsSectionProps) {
         await loadComments();
       } else {
         const error = await response.json();
-        alert(error.error || "Ошибка при обновлении комментария");
+        toast.error(error.error || "Ошибка при обновлении комментария");
       }
     } catch (error) {
       console.error("Error updating comment:", error);
-      alert("Ошибка при обновлении комментария");
+      toast.error("Ошибка при обновлении комментария");
     } finally {
       setLoading(false);
     }
@@ -108,11 +109,11 @@ export default function CommentsSection({ productId }: CommentsSectionProps) {
         await loadComments();
       } else {
         const error = await response.json();
-        alert(error.error || "Ошибка при удалении комментария");
+        toast.error(error.error || "Ошибка при удалении комментария");
       }
     } catch (error) {
       console.error("Error deleting comment:", error);
-      alert("Ошибка при удалении комментария");
+      toast.error("Ошибка при удалении комментария");
     } finally {
       setLoading(false);
     }

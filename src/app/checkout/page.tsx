@@ -9,6 +9,7 @@ import { useCartStore } from "@/store/cart";
 import ShippingForm from "@/components/checkout/ShippingForm";
 import PaymentMethod from "@/components/checkout/PaymentMethod";
 import Image from "next/image";
+import toast from "react-hot-toast";
 
 interface SavedAddress {
   id: string;
@@ -124,7 +125,8 @@ export default function CheckoutPage() {
     e.preventDefault();
 
     if (getTotalItems() === 0) {
-      alert("Корзина пуста");
+      toast.error("Корзина пуста");
+
       return;
     }
 
@@ -137,7 +139,8 @@ export default function CheckoutPage() {
       !formData.city ||
       !formData.postal_code
     ) {
-      alert("Заполните все обязательные поля");
+      toast.error("Заполните все обязательные поля");
+
       return;
     }
 
@@ -179,11 +182,11 @@ export default function CheckoutPage() {
         clearCart();
         router.push(`/checkout/success?order=${data.order.order_number}`);
       } else {
-        alert(data.error || "Ошибка при создании заказа");
+        toast.error(data.error || "Ошибка при создании заказа");
       }
     } catch (error) {
       console.error("Error submitting order:", error);
-      alert("Произошла ошибка. Попробуйте еще раз.");
+      toast.error("Ошибка при создании заказа");
     } finally {
       setIsSubmitting(false);
     }
