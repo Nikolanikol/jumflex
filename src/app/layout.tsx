@@ -6,6 +6,7 @@ import Footer from "@/components/layout/Footer";
 import SessionProvider from "@/components/providers/SessionProvider";
 import ToastProvider from "@/components/providers/ToastProvider";
 import { generateMetadata, generateOrganizationSchema } from "@/lib/seo-utils";
+import GoogleAnalytics from "@/components/google/GoogleAnalytics";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -29,6 +30,7 @@ export default function RootLayout({
     <html lang="ko">
       <body className={inter.className}>
         <SessionProvider>
+          <GoogleAnalytics />
           <ToastProvider />
           <meta
             name="google-site-verification"
