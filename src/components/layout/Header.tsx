@@ -104,7 +104,7 @@ export default function Header() {
               </button>
 
               {/* Dropdown меню */}
-              <div className="absolute left-0 top-full mt-2 w-56 bg-white rounded-xl shadow-xl border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+              <div className="absolute left-0 top-full mt-2 w-56 bg-white rounded-xl shadow-xl border border-gray-100   group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                 <div className="py-2">
                   {[
                     { name: "Протеин", slug: "protein", icon: "💪" },
@@ -255,7 +255,7 @@ export default function Header() {
         </div>
 
         {/* Navigation */}
-        <nav className="hidden md:flex items-center gap-6 py-3 border-t border-dark">
+        <nav className="flex md:flex items-center gap-6 py-3 border-t border-dark">
           {/* Каталог с dropdown */}
           <div className="relative group">
             <button className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-secondary hover:text-primary hover:bg-light transition-all">

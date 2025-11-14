@@ -78,6 +78,7 @@ export interface Product {
   category?: Category
   brand?: Brand
   reviews?: Review[]
+  stock: number
 }
 
 export interface Order {

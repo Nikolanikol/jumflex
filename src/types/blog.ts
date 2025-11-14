@@ -26,18 +26,18 @@ export interface BlogPost {
   id: string;
   title: string;
   slug: string;
-  excerpt: string | null;
+  excerpt: string | undefined;
   content: string;
-  cover_image: string | null;
+  cover_image: string | undefined;
   author_id: string;
   category_id: string | null;
   status: BlogPostStatus;
   views_count: number;
-  published_at: string | null;
+  published_at: string | undefined;
   created_at: string;
   updated_at: string;
   meta_title: string | null;
-  meta_description: string | null;
+  meta_description: string | undefined;
 }
 
 export interface BlogPostTag {

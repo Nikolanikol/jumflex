@@ -42,7 +42,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const { data: products } = await supabase
     .from("products")
     .select("id, slug, updated_at")
-    .eq("status", "active")
     .order("updated_at", { ascending: false });
 
   const productPages: MetadataRoute.Sitemap =
@@ -53,21 +52,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.7,
     })) || [];
 
-  // Получаем все категории
+  // Получаем все категории (БЕЗ updated_at, так как его нет в таблице)
   const { data: categories } = await supabase
     .from("categories")
-    .select("id, slug, updated_at")
-    .order("updated_at", { ascending: false });
+    .select("id, slug, created_at")
+    .order("created_at", { ascending: false });
 
   const categoryPages: MetadataRoute.Sitemap =
     categories?.map((category) => ({
-      url: `${baseUrl}/category/${category.slug || category.id}`,
-      lastModified: new Date(category.updated_at),
+      url: `${baseUrl}/products?category=${category.id}`,
+      lastModified: new Date(category.created_at),
       changeFrequency: "weekly" as const,
       priority: 0.8,
     })) || [];
 
-  // Получаем все посты блога
+  // Получаем все опубликованные посты блога
   const { data: posts } = await supabase
     .from("blog_posts")
     .select("id, slug, updated_at")
@@ -82,5 +81,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.6,
     })) || [];
 
-  return [...staticPages, ...productPages, ...categoryPages, ...blogPages];
+  // Получаем категории блога
+  const { data: blogCategories } = await supabase
+    .from("blog_categories")
+    .select("id, slug, created_at")
+    .order("created_at", { ascending: false });
+
+  const blogCategoryPages: MetadataRoute.Sitemap =
+    blogCategories?.map((category) => ({
+      url: `${baseUrl}/blog?category=${category.id}`,
+      lastModified: new Date(category.created_at),
+      changeFrequency: "weekly" as const,
+      priority: 0.7,
+    })) || [];
+
+  return [...staticPages, ...productPages, ...categoryPages, ...blogPages, ...blogCategoryPages];
 }

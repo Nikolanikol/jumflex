@@ -4,7 +4,38 @@ import { Calendar, User, Eye, Tag, ArrowLeft, Share2 } from "lucide-react";
 import BlogPostContent from "@/components/blog/BlogPostContent";
 import BlogSidebar from "@/components/blog/BlogSidebar";
 import { BlogPostWithRelations } from "@/types/blog";
+import { Metadata } from "next";
+import {
+  generateMetadata as generateSEOMetadata,
+  generateArticleSchema,
+} from "@/lib/seo-utils";
 
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const post = await getPost(slug);
+
+  if (!post) {
+    return {
+      title: "Пост не найден | FitStore Blog",
+      robots: { index: false, follow: false },
+    };
+  }
+
+  return generateSEOMetadata({
+    title: post.meta_title || post.title,
+    description: post.meta_description || post.excerpt,
+    image: post.cover_image,
+    url: `/blog/${post.slug}`,
+    type: "article",
+    author: post.author.name,
+    publishedTime: post.published_at,
+    modifiedTime: post.updated_at,
+  });
+}
 // Помечаем как динамическую страницу
 export const dynamic = "force-dynamic";
 
@@ -32,6 +63,15 @@ export default async function BlogPostPage({
 }) {
   const { slug } = await params;
   const post = await getPost(slug);
+  const articleSchema = generateArticleSchema({
+    headline: post?.title || "headline",
+    description: post?.excerpt || "",
+    image: post?.cover_image || "",
+    datePublished: post?.published_at || "datePublished",
+    dateModified: post?.updated_at || "dateModified",
+    author: post?.author.name || "author",
+    url: `/blog/${post?.slug}`,
+  });
 
   if (!post || post.status !== "published") {
     notFound();
@@ -51,6 +91,10 @@ export default async function BlogPostPage({
 
   return (
     <div className="min-h-screen bg-dark">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
+      />
       {/* Hero Section */}
       <div className="relative py-12 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-accent/5"></div>

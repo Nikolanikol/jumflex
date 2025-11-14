@@ -9,10 +9,48 @@ import WishlistButton from "@/components/products/WishlistButton";
 import RatingSection from "@/components/products/RatingSection";
 import CommentsSection from "@/components/products/CommentsSection";
 import { supabase } from "@/lib/supabase";
-
+import { Metadata } from "next";
+import { generateMetadata as generateSEOMetadata } from "@/lib/seo-utils";
+import Breadcrumbs from "@/components/seo/Breadcrumbs";
+import ProductStructuredData from "@/components/seo/ProductStructuredData";
 // Помечаем страницу как динамическую для Vercel
 export const dynamic = "force-dynamic";
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const product = await getProduct(slug);
 
+  if (!product) {
+    return {
+      title: "Продукт не найден | FitStore",
+      robots: { index: false, follow: false },
+    };
+  }
+
+  const price = product.discount_price || product.price;
+  const keywords = [
+    product.name_ru,
+    product.category?.name_ru,
+    product.brand?.name,
+    "спортивное питание",
+  ]
+    .filter(Boolean)
+    .join(", ");
+
+  return generateSEOMetadata({
+    title: `${product.name_ru} - ${price.toLocaleString("ko-KR")} ₩`,
+    description: product.description_ru
+      ?.substring(0, 160)
+      .replace(/<[^>]*>/g, ""),
+    keywords,
+    image: product.images?.[0],
+    url: `/products/${product.slug}`,
+    type: "product",
+  });
+}
 async function getProduct(slug: string): Promise<Product | null> {
   try {
     const { data: product, error } = await supabase
@@ -94,6 +132,24 @@ export default async function ProductPage({
   const similarProducts = product.category_id
     ? await getSimilarProducts(product.category_id, product.id)
     : [];
+  const reviews = product.reviews || [];
+  const averageRating =
+    reviews.length > 0
+      ? reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length
+      : 0;
+  // Данные для хлебных крошек
+  const breadcrumbItems = [
+    { name: "Продукты", url: "/products" },
+    ...(product.category
+      ? [
+          {
+            name: product.category.name_ru,
+            url: `/products?category=${product.category.slug}`,
+          },
+        ]
+      : []),
+    { name: product.name_ru, url: `/products/${product.slug}` },
+  ];
 
   const price = product.discount_price || product.price;
   const hasDiscount =
@@ -106,6 +162,12 @@ export default async function ProductPage({
 
   return (
     <div className="min-h-screen bg-dark py-8">
+      {/* Structured Data для SEO */}
+      <ProductStructuredData
+        product={product}
+        averageRating={averageRating}
+        reviewCount={reviews.length}
+      />
       <div className="container mx-auto px-4">
         {/* Breadcrumbs */}
         <nav className="mb-8 flex items-center space-x-2 text-sm text-secondary">
@@ -130,7 +192,8 @@ export default async function ProductPage({
           <span>/</span>
           <span className="text-white">{product.name_ru}</span>
         </nav>
-
+        {/* //not actial vesion */}
+        {/* <Breadcrumbs items={breadcrumbItems} /> */}
         {/* Product Section */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
           {/* Gallery */}
@@ -224,7 +287,6 @@ export default async function ProductPage({
             </div>
           </div>
         </div>
-
         {/* Description */}
         {product.description_ru && (
           <div className="mb-12 card">
@@ -235,7 +297,6 @@ export default async function ProductPage({
             />
           </div>
         )}
-
         {/* Ingredients */}
         {product.ingredients && (
           <div className="mb-12 card">
@@ -243,7 +304,6 @@ export default async function ProductPage({
             <p className="text-secondary">{product.ingredients}</p>
           </div>
         )}
-
         {/* Usage Instructions */}
         {product.usage_instructions && (
           <div className="mb-12 card">
@@ -253,17 +313,14 @@ export default async function ProductPage({
             <p className="text-secondary">{product.usage_instructions}</p>
           </div>
         )}
-
         {/* Rating Section */}
         <div className="mb-12">
           <RatingSection productId={product.id} />
         </div>
-
         {/* Comments Section */}
         <div className="mb-12">
           <CommentsSection productId={product.id} />
         </div>
-
         {/* Similar Products */}
         {similarProducts.length > 0 && (
           <div>

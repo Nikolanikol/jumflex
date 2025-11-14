@@ -43,7 +43,9 @@ export default function ProductCard({ product }: ProductCardProps) {
           {product.images && product.images[0] ? (
             <Image
               src={product.images[0]}
-              alt={product.name_ru || product.name_ko}
+              alt={`${product.name_ru} - ${
+                product.brand?.name || "спортивное питание"
+              }`}
               fill
               className="object-cover group-hover:scale-105 transition-transform duration-500"
             />
