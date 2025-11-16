@@ -22,7 +22,7 @@ export default function Footer() {
             <p className="text-secondary text-sm mb-6 leading-relaxed">
               Лучший магазин спортивного питания в Корее
             </p>
-            <div className="flex gap-3">
+            {/* <div className="flex gap-3">
               <a
                 href="#"
                 className="w-10 h-10 rounded-lg bg-light hover:bg-primary/10 hover:border-primary border border-dark flex items-center justify-center transition-all group"
@@ -50,7 +50,7 @@ export default function Footer() {
                   className="text-secondary group-hover:text-primary"
                 />
               </a>
-            </div>
+            </div> */}
           </div>
 
           {/* Quick Links */}
@@ -150,11 +150,11 @@ export default function Footer() {
                   size={16}
                   className="text-primary mt-0.5 flex-shrink-0"
                 />
-                <span>+82 2-1234-5678</span>
+                <span>+82 10 7732 4344</span>
               </li>
               <li className="flex items-start gap-3 text-secondary text-sm">
                 <Mail size={16} className="text-primary mt-0.5 flex-shrink-0" />
-                <span>support@fitstore.kr</span>
+                <span>fitstoresupp@gmail.com</span>
               </li>
               <li className="flex items-start gap-3 text-secondary text-sm">
                 <MapPin

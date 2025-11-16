@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Category, Brand, Product } from "@/types/database";
 import { Save, X, Upload } from "lucide-react";
 import ImageUpload from "./ImageUpload";
+import toast from "react-hot-toast";
 
 interface ProductFormProps {
   product?: Product;
@@ -116,15 +117,16 @@ export default function ProductForm({
       });
 
       if (response.ok) {
-        alert(isEdit ? "Товар обновлен" : "Товар создан");
+        toast.success(isEdit ? "Товар обновлен" : "Товар создан");
+
         router.push("/admin/products");
       } else {
         const data = await response.json();
-        alert(data.error || "Ошибка при сохранении");
+        toast.error("Ошибка при сохранении товара");
       }
     } catch (error) {
       console.error("Error saving product:", error);
-      alert("Ошибка при сохранении");
+      toast.error("Ошибка при сохранении товара");
     } finally {
       setLoading(false);
     }
