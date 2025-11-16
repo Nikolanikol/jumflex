@@ -28,9 +28,9 @@ export default function ProductForm({
   const [brands, setBrands] = useState<Brand[]>([]);
 
   const [formData, setFormData] = useState({
-    name_ko: product?.name_ko || "",
+    name_ko: product?.name_ko || "a",
     name_ru: product?.name_ru || "",
-    name_en: product?.name_en || "",
+    // name_en: product?.name_en || "",
     slug: product?.slug || "",
     description_ko: product?.description_ko || "",
     description_ru: product?.description_ru || "",
@@ -91,8 +91,8 @@ export default function ProductForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!formData.name_ko || !formData.slug || !formData.price) {
+    console.log(formData);
+    if (!formData.name_ru || !formData.slug || !formData.price) {
       alert("Заполните обязательные поля");
       return;
     }
@@ -148,7 +148,7 @@ export default function ProductForm({
         <div className="space-y-4">
           {/* Names */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {/* <div>
+            <div>
               <label className="block text-sm font-medium text-white mb-2">
                 Название (한국어) *
               </label>
@@ -159,10 +159,10 @@ export default function ProductForm({
                 className="input-field"
                 required
               />
-            </div> */}
-            {/* <div>
+            </div>
+            <div className="col-span-3">
               <label className="block text-sm font-medium text-white mb-2">
-                Название (Русский)
+                Название
               </label>
               <input
                 type="text"
@@ -170,8 +170,8 @@ export default function ProductForm({
                 onChange={(e) => handleChange("name_ru", e.target.value)}
                 className="input-field"
               />
-            </div> */}
-            <div className="col-span-3">
+            </div>
+            {/* <div className="col-span-3">
               <label className="block  text-sm font-medium text-white mb-2">
                 Название
               </label>
@@ -181,7 +181,7 @@ export default function ProductForm({
                 onChange={(e) => handleChange("name_en", e.target.value)}
                 className="input-field"
               />
-            </div>
+            </div> */}
           </div>
 
           {/* Slug */}
