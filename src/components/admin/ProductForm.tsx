@@ -1,11 +1,17 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
+import dynamic from "next/dynamic";
 import { Category, Brand, Product } from "@/types/database";
-import { Save, X, Upload } from "lucide-react";
+import { Save, X } from "lucide-react";
 import ImageUpload from "./ImageUpload";
-import toast from "react-hot-toast";
+import "easymde/dist/easymde.min.css";
+
+// Динамический импорт markdown редактора (только на клиенте)
+const SimpleMDE = dynamic(() => import("react-simplemde-editor"), {
+  ssr: false,
+});
 
 interface ProductFormProps {
   product?: Product;
@@ -34,14 +40,14 @@ export default function ProductForm({
     price: product?.price || 0,
     discount_price: product?.discount_price || 0,
     stock_quantity: product?.stock_quantity || 0,
-    images: product?.images?.join("\n") || "",
     ingredients: product?.ingredients || "",
     usage_instructions: product?.usage_instructions || "",
     is_featured: product?.is_featured || false,
     is_new: product?.is_new || false,
   });
-  // Замените состояние images:
+
   const [images, setImages] = useState<string[]>(product?.images || []);
+
   useEffect(() => {
     loadCategories();
     loadBrands();
@@ -117,16 +123,15 @@ export default function ProductForm({
       });
 
       if (response.ok) {
-        toast.success(isEdit ? "Товар обновлен" : "Товар создан");
-
+        alert(isEdit ? "Товар обновлен" : "Товар создан");
         router.push("/admin/products");
       } else {
         const data = await response.json();
-        toast.error("Ошибка при сохранении товара");
+        alert(data.error || "Ошибка при сохранении");
       }
     } catch (error) {
       console.error("Error saving product:", error);
-      toast.error("Ошибка при сохранении товара");
+      alert("Ошибка при сохранении");
     } finally {
       setLoading(false);
     }
@@ -143,7 +148,7 @@ export default function ProductForm({
         <div className="space-y-4">
           {/* Names */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
+            {/* <div>
               <label className="block text-sm font-medium text-white mb-2">
                 Название (한국어) *
               </label>
@@ -154,8 +159,8 @@ export default function ProductForm({
                 className="input-field"
                 required
               />
-            </div>
-            <div>
+            </div> */}
+            {/* <div>
               <label className="block text-sm font-medium text-white mb-2">
                 Название (Русский)
               </label>
@@ -165,10 +170,10 @@ export default function ProductForm({
                 onChange={(e) => handleChange("name_ru", e.target.value)}
                 className="input-field"
               />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-white mb-2">
-                Название (English)
+            </div> */}
+            <div className="col-span-3">
+              <label className="block  text-sm font-medium text-white mb-2">
+                Название
               </label>
               <input
                 type="text"
@@ -235,29 +240,42 @@ export default function ProductForm({
             </div>
           </div>
 
-          {/* Descriptions */}
+          {/* Descriptions with Markdown Editor */}
           <div className="space-y-4">
-            <div>
+            {/* <div>
               <label className="block text-sm font-medium text-white mb-2">
                 Описание (한국어)
               </label>
-              <textarea
-                value={formData.description_ko}
-                onChange={(e) => handleChange("description_ko", e.target.value)}
-                rows={4}
-                className="input-field resize-none"
-              />
-            </div>
-            <div>
+              <div className="markdown-editor">
+                <SimpleMDE
+                  value={formData.description_ko}
+                  onChange={(value) => handleChange("description_ko", value)}
+                />
+              </div>
+            </div> */}
+
+            {/* <div>
               <label className="block text-sm font-medium text-white mb-2">
                 Описание (Русский)
               </label>
-              <textarea
-                value={formData.description_ru}
-                onChange={(e) => handleChange("description_ru", e.target.value)}
-                rows={4}
-                className="input-field resize-none"
-              />
+              <div className="markdown-editor">
+                <SimpleMDE
+                  value={formData.description_ru}
+                  onChange={(value) => handleChange("description_ru", value)}
+                />
+              </div>
+            </div> */}
+
+            <div>
+              <label className="block text-sm font-medium text-white mb-2">
+                Описание
+              </label>
+              <div className="markdown-editor">
+                <SimpleMDE
+                  value={formData.description_en}
+                  onChange={(value) => handleChange("description_en", value)}
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -308,6 +326,7 @@ export default function ProductForm({
           </div>
         </div>
       </div>
+
       {/* Images */}
       <div className="card p-6">
         <h2 className="text-xl font-bold text-white mb-6">
@@ -315,38 +334,46 @@ export default function ProductForm({
         </h2>
         <ImageUpload images={images} onChange={setImages} maxImages={10} />
       </div>
+
       {/* Additional Info */}
       <div className="card p-6">
         <h2 className="text-xl font-bold text-white mb-6">
           Дополнительная информация
         </h2>
 
-        <div className="space-y-4">
+        <div className="space-y-6">
+          {/* Ingredients with Markdown Editor */}
           <div>
             <label className="block text-sm font-medium text-white mb-2">
               Состав
             </label>
-            <textarea
-              value={formData.ingredients}
-              onChange={(e) => handleChange("ingredients", e.target.value)}
-              rows={3}
-              className="input-field resize-none"
-              placeholder="Сывороточный протеин, ароматизаторы..."
-            />
+            <div className="markdown-editor">
+              <SimpleMDE
+                value={formData.ingredients}
+                onChange={(value) => handleChange("ingredients", value)}
+              />
+            </div>
+            <p className="text-xs text-secondary mt-2">
+              💡 Совет: используйте списки для ингредиентов, таблицы для пищевой
+              ценности
+            </p>
           </div>
+
+          {/* Usage Instructions with Markdown Editor */}
           <div>
             <label className="block text-sm font-medium text-white mb-2">
               Способ применения
             </label>
-            <textarea
-              value={formData.usage_instructions}
-              onChange={(e) =>
-                handleChange("usage_instructions", e.target.value)
-              }
-              rows={3}
-              className="input-field resize-none"
-              placeholder="Принимайте 1 порцию после тренировки..."
-            />
+            <div className="markdown-editor">
+              <SimpleMDE
+                value={formData.usage_instructions}
+                onChange={(value) => handleChange("usage_instructions", value)}
+              />
+            </div>
+            <p className="text-xs text-secondary mt-2">
+              💡 Совет: используйте нумерованные списки (1. 2. 3.) для пошаговых
+              инструкций
+            </p>
           </div>
         </div>
       </div>
@@ -405,6 +432,60 @@ export default function ProductForm({
           )}
         </button>
       </div>
+
+      {/* Стили для markdown редактора */}
+      <style jsx global>{`
+        .markdown-editor .EasyMDEContainer {
+          background: var(--color-bg-light);
+          border-radius: 12px;
+        }
+
+        .markdown-editor .EasyMDEContainer .CodeMirror {
+          background: var(--color-bg-light);
+          color: var(--color-text-primary);
+          border: 1.5px solid var(--color-border);
+          border-radius: 12px;
+          padding: 10px;
+          font-size: 14px;
+          min-height: 300px;
+        }
+
+        .markdown-editor .editor-toolbar {
+          background: var(--color-bg-light);
+          border: 1.5px solid var(--color-border);
+          border-bottom: none;
+          border-radius: 12px 12px 0 0;
+        }
+
+        .markdown-editor .editor-toolbar button {
+          color: var(--color-text-secondary) !important;
+        }
+
+        .markdown-editor .editor-toolbar button:hover,
+        .markdown-editor .editor-toolbar button.active {
+          background: var(--color-bg-dark);
+          border-color: var(--color-primary);
+          color: var(--color-primary) !important;
+        }
+
+        .markdown-editor .CodeMirror-cursor {
+          border-left-color: var(--color-primary);
+        }
+
+        .markdown-editor .editor-statusbar {
+          color: var(--color-text-secondary);
+          background: var(--color-bg-light);
+          border: 1.5px solid var(--color-border);
+          border-top: none;
+          border-radius: 0 0 12px 12px;
+        }
+
+        .markdown-editor .editor-preview,
+        .markdown-editor .editor-preview-side {
+          background: var(--color-bg-light);
+          color: var(--color-text-primary);
+        }
+      `}</style>
     </form>
   );
 }

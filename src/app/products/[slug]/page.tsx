@@ -13,6 +13,9 @@ import { Metadata } from "next";
 import { generateMetadata as generateSEOMetadata } from "@/lib/seo-utils";
 import Breadcrumbs from "@/components/seo/Breadcrumbs";
 import ProductStructuredData from "@/components/seo/ProductStructuredData";
+import ProductDescription from "@/components/products/ProductDescription";
+import ProductIngredients from "@/components/products/ProductIngredients";
+import ProductUsageInstructions from "@/components/products/ProductUsageInstructions";
 // Помечаем страницу как динамическую для Vercel
 export const dynamic = "force-dynamic";
 export async function generateMetadata({
@@ -289,28 +292,26 @@ export default async function ProductPage({
         </div>
         {/* Description */}
         {product.description_ru && (
-          <div className="mb-12 card">
+          <div className="mb-12 card px-5 py-10">
             <h2 className="text-2xl font-bold text-white mb-4">Описание</h2>
-            <div
-              className="text-secondary prose prose-invert max-w-none"
-              dangerouslySetInnerHTML={{ __html: product.description_ru }}
-            />
+            <ProductDescription content={product.description_ru} />
           </div>
         )}
         {/* Ingredients */}
         {product.ingredients && (
-          <div className="mb-12 card">
+          <div className="mb-12 card px-5 py-10">
             <h2 className="text-2xl font-bold text-white mb-4">Состав</h2>
-            <p className="text-secondary">{product.ingredients}</p>
+            <ProductIngredients content={product.ingredients} />
           </div>
         )}
         {/* Usage Instructions */}
         {product.usage_instructions && (
-          <div className="mb-12 card">
+          <div className="mb-12 card px-5 py-10">
             <h2 className="text-2xl font-bold text-white mb-4">
               Способ применения
             </h2>
-            <p className="text-secondary">{product.usage_instructions}</p>
+
+            <ProductUsageInstructions content={product.usage_instructions} />
           </div>
         )}
         {/* Rating Section */}
