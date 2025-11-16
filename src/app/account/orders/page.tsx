@@ -84,6 +84,7 @@ export default function OrdersPage() {
     );
   }
 
+  console.log(orders, "orders");
   return (
     <div className="space-y-6">
       <div className="card p-6">
@@ -165,13 +166,13 @@ export default function OrdersPage() {
                   ₩{order.total_amount.toLocaleString()}
                 </p>
               </div>
-              <Link
+              {/* <Link
                 href={`/account/orders/${order.id}`}
                 className="btn-outline flex items-center gap-2"
               >
                 <Eye size={18} />
                 <span>Подробнее</span>
-              </Link>
+              </Link> */}
             </div>
           </div>
         ))}

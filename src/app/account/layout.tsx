@@ -11,7 +11,7 @@ import {
 const navigation = [
   { name: "Профиль", href: "/account", icon: User },
   { name: "Мои заказы", href: "/account/orders", icon: ShoppingBag },
-  { name: "Избранное", href: "/account/wishlist", icon: Heart },
+  // { name: "Избранное", href: "/account/wishlist", icon: Heart },
   //   { name: "Адреса доставки", href: "/account/addresses", icon: MapPin },
   //   { name: "Настройки", href: "/account/settings", icon: Settings },
 ];

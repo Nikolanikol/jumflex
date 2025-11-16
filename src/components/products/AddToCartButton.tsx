@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ShoppingCart, Plus, Minus } from "lucide-react";
 import { useCartStore } from "@/store/cart";
 import { Product } from "@/types/database";
+import toast from "react-hot-toast";
 
 interface AddToCartButtonProps {
   product: Product;
@@ -16,7 +17,7 @@ export default function AddToCartButton({ product }: AddToCartButtonProps) {
   const handleAddToCart = () => {
     addItem(product, quantity);
     // TODO: Показать уведомление об успешном добавлении
-    alert(`Добавлено в корзину: ${quantity} шт`);
+    toast.success(`Добавлено в корзину: ${quantity} шт`);
   };
 
   const incrementQuantity = () => {
