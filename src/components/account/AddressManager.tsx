@@ -170,79 +170,80 @@ export default function AddressManager() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {addresses.map((address) => (
-            <div
-              key={address.id}
-              className={`card p-6 relative ${
-                address.is_default ? "border-2 border-primary" : ""
-              }`}
-            >
-              {/* Default Badge */}
-              {address.is_default && (
-                <div className="absolute top-4 right-4">
-                  <span className="inline-flex items-center gap-1 px-3 py-1 bg-primary/10 border border-primary/20 rounded-full text-xs font-semibold text-primary">
-                    <Check size={14} />
-                    Основной
-                  </span>
-                </div>
-              )}
-
-              {/* Label */}
-              <div className="mb-4">
-                <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                  <MapPin size={18} className="text-primary" />
-                  {address.label}
-                </h3>
-              </div>
-
-              {/* Address Details */}
-              <div className="space-y-2 mb-6">
-                <p className="text-white font-medium">
-                  {address.recipient_name}
-                </p>
-                <p className="text-secondary text-sm">
-                  {address.recipient_phone}
-                </p>
-                <p className="text-secondary text-sm">
-                  {address.address_line1}
-                  {address.address_line2 && <>, {address.address_line2}</>}
-                </p>
-                <p className="text-secondary text-sm">
-                  {address.city}
-                  {address.state && <>, {address.state}</>}
-                </p>
-                <p className="text-secondary text-sm">
-                  {address.postal_code}, {address.country}
-                </p>
-              </div>
-
-              {/* Actions */}
-              <div className="flex items-center gap-2 pt-4 border-t border-dark">
-                {!address.is_default && (
-                  <button
-                    onClick={() => handleSetDefault(address.id)}
-                    className="flex-1 btn-outline text-sm py-2"
-                  >
-                    Сделать основным
-                  </button>
+          {addresses.length > 0 &&
+            addresses.map((address) => (
+              <div
+                key={address.id}
+                className={`card p-6 relative ${
+                  address.is_default ? "border-2 border-primary" : ""
+                }`}
+              >
+                {/* Default Badge */}
+                {address.is_default && (
+                  <div className="absolute top-4 right-4">
+                    <span className="inline-flex items-center gap-1 px-3 py-1 bg-primary/10 border border-primary/20 rounded-full text-xs font-semibold text-primary">
+                      <Check size={14} />
+                      Основной
+                    </span>
+                  </div>
                 )}
-                <button
-                  onClick={() => setEditingAddress(address)}
-                  className="p-2 hover:bg-lighter rounded-lg transition-all"
-                  title="Редактировать"
-                >
-                  <Edit size={18} className="text-secondary" />
-                </button>
-                <button
-                  onClick={() => handleDelete(address.id)}
-                  className="p-2 hover:bg-lighter rounded-lg transition-all"
-                  title="Удалить"
-                >
-                  <Trash2 size={18} className="text-accent" />
-                </button>
+
+                {/* Label */}
+                <div className="mb-4">
+                  <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                    <MapPin size={18} className="text-primary" />
+                    {address.label}
+                  </h3>
+                </div>
+
+                {/* Address Details */}
+                <div className="space-y-2 mb-6">
+                  <p className="text-white font-medium">
+                    {address.recipient_name}
+                  </p>
+                  <p className="text-secondary text-sm">
+                    {address.recipient_phone}
+                  </p>
+                  <p className="text-secondary text-sm">
+                    {address.address_line1}
+                    {address.address_line2 && <>, {address.address_line2}</>}
+                  </p>
+                  <p className="text-secondary text-sm">
+                    {address.city}
+                    {address.state && <>, {address.state}</>}
+                  </p>
+                  <p className="text-secondary text-sm">
+                    {address.postal_code}, {address.country}
+                  </p>
+                </div>
+
+                {/* Actions */}
+                <div className="flex items-center gap-2 pt-4 border-t border-dark">
+                  {!address.is_default && (
+                    <button
+                      onClick={() => handleSetDefault(address.id)}
+                      className="flex-1 btn-outline text-sm py-2"
+                    >
+                      Сделать основным
+                    </button>
+                  )}
+                  <button
+                    onClick={() => setEditingAddress(address)}
+                    className="p-2 hover:bg-lighter rounded-lg transition-all"
+                    title="Редактировать"
+                  >
+                    <Edit size={18} className="text-secondary" />
+                  </button>
+                  <button
+                    onClick={() => handleDelete(address.id)}
+                    className="p-2 hover:bg-lighter rounded-lg transition-all"
+                    title="Удалить"
+                  >
+                    <Trash2 size={18} className="text-accent" />
+                  </button>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
         </div>
       )}
     </div>
