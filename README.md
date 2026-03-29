@@ -1,5 +1,7 @@
 # JumFlex — Sports Nutrition E-Commerce
 
+> **Live demo:** [jymflex.vercel.app](https://jymflex.vercel.app)
+>
 > Full-stack e-commerce platform for a sports nutrition store. Built with Next.js 16, Supabase, and NextAuth. Includes a full admin panel, blog CMS, product ratings, reviews, and Google OAuth.
 
 ## Screenshots
